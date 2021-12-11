@@ -7,7 +7,7 @@ leaderboardFile = open(sys.argv[1])
 leaderboardJson = json.load(leaderboardFile)
 
 day = sys.argv[2]
-part = sys.argv[3] if len(sys.argv) == 4 else 2
+part = sys.argv[3] if len(sys.argv) == 4 else "2"
 
 def hasDayAndPart(m):
     return day in m and part in m[day]
