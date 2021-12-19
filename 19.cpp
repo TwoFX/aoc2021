@@ -24,12 +24,13 @@ using namespace std;
 
 using ll = long long;
 using ld = long double;
+using dpos = array<ll, 3>;
 
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
 
-	vector<vector<vector<ll>>> p;
+	vector<vector<dpos>> p;
 
 	ll x;
 	while (cin >> x) {
@@ -45,19 +46,22 @@ int main() {
 	int n = sz(p);
 
 	vector<bool> know(n);
-	vector<vector<vector<ll>>> fi(n);
-	vector<vector<ll>> pos(n);
+	vector<vector<dpos>> fi(n);
+	vector<dpos> pos(n);
 
 	fi[0] = p[0];
 	pos[0] = { 0, 0, 0 };
 	sort(all(fi[0]));
 	know[0] = true;
 
+	set<pair<int, int>> knownbad;
+
 	fora(_, n) {
 		fora(i, n) {
 			if (!know[i]) continue;
 			fora(j, n) {
 				if (know[j]) continue;
+				if (has(knownbad, mp(i, j))) continue;
 
 				fora(nfx, 2) fora(nfy, 2) fora(nfz, 2) {
 					if (know[j]) break;
@@ -72,14 +76,14 @@ int main() {
 					do {
 						fora(from, sz(fi[i])) fora(to, sz(p[j])) {
 							if (know[j]) break;
-							vector<vector<ll>> cand;
+							vector<dpos> cand;
 							forc(v, p[j]) {
 								cand.pb({ v[ind[0]] - p[j][to][ind[0]] + fi[i][from][0],
 										v[ind[1]] - p[j][to][ind[1]] + fi[i][from][1],
 										v[ind[2]] - p[j][to][ind[2]] + fi[i][from][2] });
 							}
 							sort(all(cand));
-							vector<vector<ll>> inter;
+							vector<dpos> inter;
 							set_intersection(all(fi[i]), all(cand), back_inserter(inter));
 							if (sz(inter) >= 12) {
 								pos[j] = {
@@ -99,6 +103,8 @@ int main() {
 					if (fz) fora(k, sz(p[j])) p[j][k][2] *= -1;
 				}
 
+				if (!know[j]) knownbad.emplace(i, j);
+
 			}
 		}
 	}
@@ -116,7 +122,7 @@ int main() {
 		imax(best, cand);
 	}
 
-	set<vector<ll>> al;
+	set<dpos> al;
 	fora(i, n) al.insert(all(fi[i]));
 	cout << best << endl;
 
